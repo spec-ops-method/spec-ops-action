@@ -1,0 +1,39 @@
+name: Self Test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - '**/*specification*.md'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - '**/*specification*.md'
+  workflow_dispatch:
+
+jobs:
+  self-test:
+    name: Self Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Run Spec Ops Action (dry-run)
+        uses: ./
+        id: spec-ops
+        with:
+          file-pattern: '**/*specification*.md'
+          labels: 'spec-change,automated'
+          dry-run: 'true'
+
+      - name: Display results
+        run: |
+          echo "Files detected: ${{ steps.spec-ops.outputs.files-count }}"
+          echo "Files: ${{ steps.spec-ops.outputs.files-detected }}"
+          echo "Issues that would be created: ${{ steps.spec-ops.outputs.issues-count }}"
+          echo "Issues: ${{ steps.spec-ops.outputs.issues-created }}"
