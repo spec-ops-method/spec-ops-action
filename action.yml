@@ -55,6 +55,10 @@ inputs:
     description: 'Whether to include a link to the PR (if triggered by PR)'
     required: false
     default: 'true'
+  sanitize-diff:
+    description: 'Escape/sanitize diff content to avoid rendering raw HTML/markdown'
+    required: false
+    default: 'true'
 
   # Issue Metadata
   labels:

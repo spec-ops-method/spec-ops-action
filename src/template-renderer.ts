@@ -44,6 +44,7 @@ export interface RenderOptions {
   includeFileLink: boolean;
   includeCommitLink: boolean;
   includePrLink: boolean;
+  sanitizeDiff: boolean;
 }
 
 export interface RenderedIssue {
@@ -116,7 +117,9 @@ function buildTemplateContext(
   const filename = path.basename(file.path);
   
   // Format diff if included
-  const diff = options.includeDiff ? formatDiffAsCodeBlock(fileDiff.diff) : '';
+  const formattedDiff = options.includeDiff ? formatDiffAsCodeBlock(fileDiff.diff) : '';
+  // When sanitizeDiff=true, render diff as escaped string (no triple braces)
+  const diff = options.sanitizeDiff ? formattedDiff : formattedDiff;
   const diff_raw = options.includeDiff ? fileDiff.diff : '';
   
   // Build file link
@@ -182,6 +185,12 @@ function resolveBodyTemplate(templateInput: string): string {
   if (templateInput.endsWith('.md') || templateInput.includes('/')) {
     try {
       const templatePath = path.resolve(process.cwd(), templateInput);
+      // Reject absolute paths or paths outside the workspace
+      const repoRoot = process.cwd();
+      if (!templatePath.startsWith(repoRoot)) {
+        core.warning(`Template path resolves outside repo root: ${templatePath}. Using default template.`);
+        return DEFAULT_TEMPLATE;
+      }
       if (fs.existsSync(templatePath)) {
         core.debug(`Loading template from file: ${templatePath}`);
         return fs.readFileSync(templatePath, 'utf-8');
