@@ -25,6 +25,7 @@ interface ActionInputs {
   includeFileLink: boolean;
   includeCommitLink: boolean;
   includePrLink: boolean;
+  sanitizeDiff: boolean;
   
   // Issue metadata
   labels: string;
@@ -111,6 +112,7 @@ async function run(): Promise<void> {
       includeFileLink: inputs.includeFileLink,
       includeCommitLink: inputs.includeCommitLink,
       includePrLink: inputs.includePrLink,
+      sanitizeDiff: inputs.sanitizeDiff,
     };
 
     const issuesToCreate = diffs.map(fileDiff => ({
@@ -189,6 +191,7 @@ function parseInputs(): ActionInputs {
     includeFileLink: core.getBooleanInput('include-file-link'),
     includeCommitLink: core.getBooleanInput('include-commit-link'),
     includePrLink: core.getBooleanInput('include-pr-link'),
+    sanitizeDiff: core.getBooleanInput('sanitize-diff'),
     
     // Issue metadata
     labels: core.getInput('labels') || 'spec-change',

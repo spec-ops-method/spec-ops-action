@@ -42,6 +42,14 @@ jobs:
 
 > **Note**: The `issues: write` permission is required for the action to create issues.
 
+## Security Notes
+
+- Use the `pull_request` event (not `pull_request_target`) to avoid elevated permissions on forked PRs.
+- Configure minimal permissions: `issues: write`, `contents: read`.
+- Consider adjusting `max-diff-lines` to limit large diffs from being posted.
+- By default, diff content is rendered inside fenced code blocks. If needed, set `sanitize-diff: 'true'` (default) to avoid rendering raw HTML.
+- Custom templates must be located inside the repository path; paths resolving outside the workspace are rejected.
+
 ## Configuration
 
 ### File Detection

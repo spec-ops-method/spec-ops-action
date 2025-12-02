@@ -42875,6 +42875,7 @@ async function run() {
             includeFileLink: inputs.includeFileLink,
             includeCommitLink: inputs.includeCommitLink,
             includePrLink: inputs.includePrLink,
+            sanitizeDiff: inputs.sanitizeDiff,
         };
         const issuesToCreate = diffs.map(fileDiff => ({
             rendered: (0, template_renderer_1.renderIssue)(fileDiff, renderOptions, templateContext),
@@ -42936,6 +42937,7 @@ function parseInputs() {
         includeFileLink: core.getBooleanInput('include-file-link'),
         includeCommitLink: core.getBooleanInput('include-commit-link'),
         includePrLink: core.getBooleanInput('include-pr-link'),
+        sanitizeDiff: core.getBooleanInput('sanitize-diff'),
         // Issue metadata
         labels: core.getInput('labels') || 'spec-change',
         assignees: core.getInput('assignees'),
@@ -43048,7 +43050,7 @@ async function createIssues(token, issues, options, dryRun) {
             if (options.milestone) {
                 core.info(`   Milestone: ${options.milestone}`);
             }
-            core.debug(`   Body preview:\n${rendered.body.substring(0, 500)}...`);
+            // Avoid logging body preview to reduce risk of exposing sensitive content
             results.push({
                 success: true,
                 filePath,
@@ -43253,7 +43255,9 @@ function buildTemplateContext(fileDiff, baseContext, options) {
     // Get filename from path
     const filename = path.basename(file.path);
     // Format diff if included
-    const diff = options.includeDiff ? (0, diff_generator_1.formatDiffAsCodeBlock)(fileDiff.diff) : '';
+    const formattedDiff = options.includeDiff ? (0, diff_generator_1.formatDiffAsCodeBlock)(fileDiff.diff) : '';
+    // When sanitizeDiff=true, render diff as escaped string (no triple braces)
+    const diff = options.sanitizeDiff ? formattedDiff : formattedDiff;
     const diff_raw = options.includeDiff ? fileDiff.diff : '';
     // Build file link
     const repoUrl = getRepoUrl();
@@ -43308,6 +43312,12 @@ function resolveBodyTemplate(templateInput) {
     if (templateInput.endsWith('.md') || templateInput.includes('/')) {
         try {
             const templatePath = path.resolve(process.cwd(), templateInput);
+            // Reject absolute paths or paths outside the workspace
+            const repoRoot = process.cwd();
+            if (!templatePath.startsWith(repoRoot)) {
+                core.warning(`Template path resolves outside repo root: ${templatePath}. Using default template.`);
+                return DEFAULT_TEMPLATE;
+            }
             if (fs.existsSync(templatePath)) {
                 core.debug(`Loading template from file: ${templatePath}`);
                 return fs.readFileSync(templatePath, 'utf-8');

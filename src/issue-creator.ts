@@ -44,7 +44,7 @@ export async function createIssues(
       if (options.milestone) {
         core.info(`   Milestone: ${options.milestone}`);
       }
-      core.debug(`   Body preview:\n${rendered.body.substring(0, 500)}...`);
+      // Avoid logging body preview to reduce risk of exposing sensitive content
       
       results.push({
         success: true,

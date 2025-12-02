@@ -22,6 +22,7 @@ describe('template-renderer', () => {
     includeFileLink: true,
     includeCommitLink: true,
     includePrLink: true,
+    sanitizeDiff: true,
   };
 
   const mockContext: Partial<TemplateContext> = {
