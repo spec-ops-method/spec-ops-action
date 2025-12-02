@@ -23,13 +23,13 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Run Spec Ops Action (dry-run)
+      - name: Run Spec Ops Action
         uses: ./
         id: spec-ops
         with:
           file-pattern: '**/*specification*.md'
           labels: 'spec-change,automated'
-          dry-run: 'true'
+          dry-run: 'false'
 
       - name: Display results
         run: |

@@ -4,7 +4,7 @@
 
 A reusable GitHub Action for the GitHub Marketplace that automatically creates issues when specification files are modified. This action supports the SpecOps methodology where version-controlled specifications are the source of truth for system behavior, and changes to specifications generate work items for implementation review.
 
-> **Status**: v1.0 Implementation Complete (December 2025)
+> **Status**: v1.0 Implementation Complete (December 2025) — Self-tested ✓
 
 ## Core Behavior
 
