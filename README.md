@@ -25,6 +25,10 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   spec-change-issues:
     runs-on: ubuntu-latest
@@ -35,6 +39,8 @@ jobs:
       
       - uses: spec-ops-method/spec-ops-action@v1
 ```
+
+> **Note**: The `issues: write` permission is required for the action to create issues.
 
 ## Configuration
 
