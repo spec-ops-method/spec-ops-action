@@ -1,0 +1,101 @@
+name: 'Spec Ops Action'
+description: 'Automatically create GitHub issues when specification files are modified. Supports spec-first workflows where specifications drive implementation.'
+author: 'spec-ops-method'
+
+branding:
+  icon: 'file-text'
+  color: 'blue'
+
+inputs:
+  # File Detection
+  file-pattern:
+    description: 'Glob pattern(s) for specification files'
+    required: false
+    default: '**/*specification*.md'
+  file-patterns:
+    description: 'Alternative: array of multiple glob patterns (one per line)'
+    required: false
+  exclude-pattern:
+    description: 'Glob pattern(s) for files to exclude'
+    required: false
+  case-sensitive:
+    description: 'Whether file pattern matching is case-sensitive'
+    required: false
+    default: 'false'
+
+  # Issue Content
+  issue-title-template:
+    description: 'Template for issue title'
+    required: false
+    default: 'Specification Change: {{ filename }}'
+  issue-body-template:
+    description: 'Path to a markdown template file for issue body, or inline template'
+    required: false
+  include-diff:
+    description: 'Whether to include the file diff in the issue body'
+    required: false
+    default: 'true'
+  diff-context-lines:
+    description: 'Number of context lines to include in diff'
+    required: false
+    default: '3'
+  max-diff-lines:
+    description: 'Maximum lines of diff to include (truncate with note if exceeded)'
+    required: false
+    default: '500'
+  include-file-link:
+    description: 'Whether to include a link to the changed file'
+    required: false
+    default: 'true'
+  include-commit-link:
+    description: 'Whether to include a link to the triggering commit'
+    required: false
+    default: 'true'
+  include-pr-link:
+    description: 'Whether to include a link to the PR (if triggered by PR)'
+    required: false
+    default: 'true'
+
+  # Issue Metadata
+  labels:
+    description: 'Comma-separated list of labels to apply to created issues'
+    required: false
+    default: 'spec-change'
+  assignees:
+    description: 'Comma-separated list of GitHub usernames to assign'
+    required: false
+  milestone:
+    description: 'Milestone number or name to associate with issues'
+    required: false
+
+  # Behavior Control
+  create-on-new-files:
+    description: 'Create issues when new specification files are added'
+    required: false
+    default: 'true'
+  create-on-deleted-files:
+    description: 'Create issues when specification files are deleted'
+    required: false
+    default: 'true'
+  dry-run:
+    description: 'Log what would be created without actually creating issues'
+    required: false
+    default: 'false'
+  github-token:
+    description: 'GitHub token for API access'
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  issues-created:
+    description: 'JSON array of issue numbers that were created'
+  issues-count:
+    description: 'Number of issues created'
+  files-detected:
+    description: 'JSON array of specification files that were detected as changed'
+  files-count:
+    description: 'Number of specification files detected'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
