@@ -1,5 +1,5 @@
 name: 'Spec Ops Action'
-description: 'Automatically create GitHub issues when specification files are modified. Supports spec-first workflows where specifications drive implementation.'
+description: 'Automatically create GitHub issues when specification files change. Supports spec-first workflows.'
 author: 'spec-ops-method'
 
 branding:
